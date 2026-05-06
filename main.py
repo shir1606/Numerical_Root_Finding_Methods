@@ -101,3 +101,62 @@ def secant():
 
 
 calculate_roots()
+
+#===========================================================================
+## Newton Raphson Method
+#Gemini chat for menu,calculation,etc.
+#https://gemini.google.com/share/fe600a2d640f
+def  Newton_Raphson (poly_expression, point_start, point_end, epsilon=0.0001):
+    """
+    Finds a root of a polynomial within a given range using the Newton Raphson method.
+
+    Parameters:
+    poly_expression (sympy.Expr): The symbolic polynomial expression.
+    point_start (float): The start of the interval.
+    point_end (float): The end of the interval.
+    epsilon (float): The desired precision (tolerance).
+
+    Returns:
+    float: The approximated root if found, otherwise None.
+    """
+
+    # Define the symbolic variable
+    x = sp.symbols('x')
+
+    # Calculate the first derivative symbolically using SymPy
+    f_prime = sp.diff(poly_expression, x)
+
+    # Initial guess: Midpoint of the range is a common starting point
+    x_curr = float(point_start + point_end) / 2.0
+
+    iteration_count = 0
+    max_iterations = 100  # Safety guard to prevent infinite loops in non-convergent cases
+
+    while iteration_count < max_iterations:
+        iteration_count += 1
+
+        # Evaluate f(x) and f'(x) at the current point
+        # .subs replaces the symbol with the value, .evalf() evaluates it to a float
+        f_val = float(poly_expression.subs(x, x_curr).evalf())
+        f_prime_val = float(f_prime.subs(x, x_curr).evalf())
+
+        # Convergence Check: Avoid division by zero if the derivative is too small
+        if abs(f_prime_val) < 1e-12:
+            print(f"Newton-Raphson failed to converge: Derivative is zero at x = {x_curr}")
+            return None
+
+        # Newton Raphson Formula: x_next = x_curr - f(x_curr) / f'(x_curr)
+        x_next = x_curr - (f_val / f_prime_val)
+
+        # Check if the result is within the required epsilon (Tolerance check)
+        if abs(x_next - x_curr) < epsilon:
+            print(f"Root found at: {x_next:.6f}")
+            print(f"Number of iterations: {iteration_count}")
+            return x_next
+
+        # Update current x for the next iteration
+        x_curr = x_next
+
+    # If the loop finishes without returning, convergence was not reached
+    print(f"Method did not converge within {max_iterations} iterations.")
+    return None
