@@ -160,3 +160,62 @@ def  Newton_Raphson (poly_expression, point_start, point_end, epsilon=0.0001):
     # If the loop finishes without returning, convergence was not reached
     print(f"Method did not converge within {max_iterations} iterations.")
     return None
+
+
+
+
+#===========================================================================
+# secant method
+# claude link:
+# https://claude.ai/share/a4e1def6-2e75-4274-abfe-01e8faff6c6d
+
+def secant_method(polynomial, start_point, end_point, epsilon=0.0001, max_iterations=1000):
+    """
+    Finds a root of a polynomial using the Secant Method.
+
+    Parameters:
+        polynomial    : A callable f(x) representing the polynomial.
+        start_point   : The left boundary of the search interval (x0).
+        end_point     : The right boundary of the search interval (x1).
+        epsilon       : Convergence tolerance (default: 0.0001).
+        max_iterations: Safety cap on iterations before declaring non-convergence.
+
+    Returns:
+        The approximate root, or None if the method does not converge.
+    """
+    x0 = start_point
+    x1 = end_point
+
+    for iteration in range(1, max_iterations + 1):
+        f0 = polynomial(x0)
+        f1 = polynomial(x1)
+
+        # Guard against division by zero (flat secant line)
+        if abs(f1 - f0) < 1e-12:
+            print("Method failed: denominator (f(x1) - f(x0)) is zero — the secant line is flat.")
+            return None
+
+        # Core secant formula: x2 = x1 - f(x1) * (x1 - x0) / (f(x1) - f(x0))
+        x2 = x1 - f1 * (x1 - x0) / (f1 - f0)
+
+        # Check whether the new point has left the original interval
+        if x2 < min(start_point, end_point) or x2 > max(start_point, end_point):
+            print(f"Warning: iterate x{iteration+1} = {x2:.6f} stepped outside "
+                  f"the interval [{min(start_point, end_point)}, {max(start_point, end_point)}]. "
+                  "Continuing anyway.")
+
+        # Convergence check: root found when |f(x2)| < epsilon
+        if abs(polynomial(x2)) < epsilon:
+            print(f"Root found after {iteration} iteration(s).")
+            print(f"Approximate root : x ≈ {x2:.6f}")
+            print(f"Residual |f(x)|  : {abs(polynomial(x2)):.2e}")
+            return x2
+
+        # Slide the window forward
+        x0, x1 = x1, x2
+
+    print(f"Method did not converge within {max_iterations} iterations.")
+    return None
+
+
+
