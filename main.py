@@ -6,15 +6,15 @@ from os import name
 def calculate_roots():
     #Main of the program: gets data, sets data, and executes the choice
     # 1. Set polynomial
-    f=lambda x:dataSet(x,"Polynom")
+    f=lambda x:8*x**3-12*x**2+15*x-1
     # 2. Set the range/area
     print("--- Define Range ---")
-    start= lambda x:dataSet(x,"Range start")
-    end = lambda x:dataSet(x,"Range End")
+    start= float(input("Range start"))
+    end = float(input("Range End"))
 
     # 3. Set segments
     # Dividing the range into steps (e.g., 0.1)
-    step = lambda x:dataSet(x,"segment size (e.g., 0.1) ")
+    step =start= float(input("segment size (e.g., 0.1) "))
 
     # 4. Menu loop
     while True:
@@ -47,41 +47,7 @@ def calculate_roots():
 
         else:
             print("Error: Invalid input. Try again.")
-
-#Data-setting functions
-def dataSet(data,Name):
-    #function that gets the data- same as input("Value", but works for everything needed)
-    if (Name=="Polynom"):
-        data=get_polynomial()
-    else:
-        print("Input",Name)
-        data=input("Enter the data: ")
-    return data
-#Setting data
-def get_polynomial():
-    """Defines the polynomial function."""
-    print("Define Polynomial, use (VALUE)^ for exponents,*+_+ for math signs")
-    polinom=input("Enter the polynomial,use simplified(without brackets,like x^2+3x+9): ")
-    # 1. Get the highest degree
-    max_exp = int(input("Enter the amount of objects(for example-x^2+3x+9 is 3 objects): "))
-    poly_data = []
-    # 2. Iterate from 0 up to the max exponent
-    # This ensures index [2] matches x^2
-    for i in range(max_exp + 1):
-        x = input(f"Enter coefficient for first part: ")
-        coefficient = float(input(f"Enter coefficient for exponent {i}: "))
-        term_tuple = (x, coefficient)
-        poly_data.append(term_tuple)
-    return polinom
-#Setting the polinom, called out of dataSet only
-#Getting info by user, returns the polynomial as a tupple of (multiply,exponent), f.e. 3x^9 is (3,9)
 #=========================================================================
-#Calculation of the value for x in polynomial
-def calculate(polinom,x):
-    sum=0
-    for i in range(len(polinom)):
-        sum+= polinom[i][0]*(x**polinom[i][1])
-    return sum
 
 #=========================================================================
 ##Root calculation methods
@@ -89,8 +55,8 @@ def calculate(polinom,x):
 def Bisection(poly_expression, point_start, point_end, epsilon=0.0001):
     # Helper to evaluate the polynomial at point x
 
-    f_start = calculate(poly_expression, point_start)
-    f_end = calculate(poly_expression,point_end)
+    f_start = poly_expression(point_start)
+    f_end =  poly_expression(point_end)
 
     # Check the Intermediate Value Theorem requirement
     if f_start * f_end > 0:
@@ -104,14 +70,14 @@ def Bisection(poly_expression, point_start, point_end, epsilon=0.0001):
     while (f_end - point_start) / 2 > epsilon:
         iteration_count += 1
         mid = (point_start + f_end) / 2
-        f_mid = calculate(poly_expression,mid)
+        f_mid =  poly_expression(mid)
 
         # If we hit the root exactly or are within epsilon
         if abs(f_mid) < epsilon:  # Floating point precision check
             break
 
         # Determine which side to keep
-        if calculate(poly_expression,point_start) * f_mid < 0:
+        if  poly_expression(point_start) * f_mid < 0:
             end = mid
         else:
             point_start = mid
