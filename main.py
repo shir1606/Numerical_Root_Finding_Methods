@@ -51,7 +51,7 @@ def calculate_roots():
 
 #=========================================================================
 ##Root calculation methods
-
+#https://gemini.google.com/app/89cd4cfd6cce7b75
 def Bisection(poly_expression, point_start, point_end, epsilon=0.0001):
     # Helper to evaluate the polynomial at point x
 
