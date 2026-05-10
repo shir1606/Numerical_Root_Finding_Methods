@@ -14,8 +14,7 @@ def calculate_roots():
 
     # 3. Set segments
     # Dividing the range into steps (e.g., 0.1)
-    step =start= float(input("segment size (e.g., 0.1) "))
-
+    step = float(input("segment size (e.g., 0.1) "))
     # 4. Menu loop
     while True:
         print("\n--- Root Calculation Menu ---")
@@ -53,10 +52,9 @@ def calculate_roots():
 ##Root calculation methods
 #https://gemini.google.com/app/89cd4cfd6cce7b75
 def Bisection(poly_expression, point_start, point_end, epsilon=0.0001):
-    # Helper to evaluate the polynomial at point x
-
+    # Helper to evaluate the polynomial at start and end
     f_start = poly_expression(point_start)
-    f_end =  poly_expression(point_end)
+    f_end = poly_expression(point_end)
 
     # Check the Intermediate Value Theorem requirement
     if f_start * f_end > 0:
@@ -67,18 +65,18 @@ def Bisection(poly_expression, point_start, point_end, epsilon=0.0001):
     mid = point_start
 
     # Loop until the interval is smaller than epsilon
-    while (f_end - point_start) / 2 > epsilon:
+    while (point_end - point_start) / 2 > epsilon:
         iteration_count += 1
-        mid = (point_start + f_end) / 2
-        f_mid =  poly_expression(mid)
+        mid = (point_start + point_end) / 2
+        f_mid = poly_expression(mid)
 
         # If we hit the root exactly or are within epsilon
-        if abs(f_mid) < epsilon:  # Floating point precision check
+        if abs(f_mid) < epsilon:
             break
 
         # Determine which side to keep
-        if  poly_expression(point_start) * f_mid < 0:
-            end = mid
+        if poly_expression(point_start) * f_mid < 0:
+            point_end = mid
         else:
             point_start = mid
 
@@ -94,13 +92,12 @@ def Bisection(poly_expression, point_start, point_end, epsilon=0.0001):
 
 
 
-calculate_roots()
-
 #===========================================================================
 ## Newton Raphson Method
 #Gemini chat for menu,calculation,etc.
 #https://gemini.google.com/share/fe600a2d640f
-def  Newton_Raphson (poly_expression, point_start, point_end, epsilon=0.0001):
+def Newton_Raphson(poly_expression, point_start, point_end, epsilon=0.0001):
+
     """
     Finds a root of a polynomial within a given range using the Newton Raphson method.
 
@@ -114,45 +111,41 @@ def  Newton_Raphson (poly_expression, point_start, point_end, epsilon=0.0001):
     float: The approximated root if found, otherwise None.
     """
 
-    # Define the symbolic variable
-    x = sp.symbols('x')
-
-    # Calculate the first derivative symbolically using SymPy
-    f_prime = sp.diff(poly_expression, x)
-
-    # Initial guess: Midpoint of the range is a common starting point
-    x_curr = float(point_start + point_end) / 2.0
+    # Initial guess: midpoint of the range
+    x_curr = (point_start + point_end) / 2
 
     iteration_count = 0
-    max_iterations = 100  # Safety guard to prevent infinite loops in non-convergent cases
+    max_iterations = 100
 
+    # Loop until the method converges or reaches max iterations
     while iteration_count < max_iterations:
         iteration_count += 1
 
-        # Evaluate f(x) and f'(x) at the current point
-        # .subs replaces the symbol with the value, .evalf() evaluates it to a float
-        f_val = float(poly_expression.subs(x, x_curr).evalf())
-        f_prime_val = float(f_prime.subs(x, x_curr).evalf())
+        # Evaluate f(x)
+        f_val = poly_expression(x_curr)
 
-        # Convergence Check: Avoid division by zero if the derivative is too small
+        # Calculate derivative using a small difference
+        h = 0.000001
+        f_prime_val = (poly_expression(x_curr + h) - poly_expression(x_curr - h)) / (2 * h)
+
+        # Avoid division by zero
         if abs(f_prime_val) < 1e-12:
-            print(f"Newton-Raphson failed to converge: Derivative is zero at x = {x_curr}")
+            print("Newton-Raphson failed: derivative is zero.")
             return None
 
-        # Newton Raphson Formula: x_next = x_curr - f(x_curr) / f'(x_curr)
-        x_next = x_curr - (f_val / f_prime_val)
+        # Newton Raphson formula
+        x_next = x_curr - f_val / f_prime_val
 
-        # Check if the result is within the required epsilon (Tolerance check)
+        # Check if the answer is close enough
         if abs(x_next - x_curr) < epsilon:
-            print(f"Root found at: {x_next:.6f}")
+            print(f"Root found at: {x_next}")
             print(f"Number of iterations: {iteration_count}")
             return x_next
 
-        # Update current x for the next iteration
+        # Update x for the next iteration
         x_curr = x_next
 
-    # If the loop finishes without returning, convergence was not reached
-    print(f"Method did not converge within {max_iterations} iterations.")
+    print("Method did not converge.")
     return None
 
 
@@ -211,5 +204,4 @@ def secant_method(polynomial, start_point, end_point, epsilon=0.0001, max_iterat
     print(f"Method did not converge within {max_iterations} iterations.")
     return None
 
-
-
+calculate_roots()
